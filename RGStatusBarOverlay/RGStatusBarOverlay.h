@@ -21,4 +21,9 @@ typedef NS_ENUM(NSUInteger, RGStatusBarOverlayAnimation) {
 + (void)hideMessageWithAnimation:(RGStatusBarOverlayAnimation)statusBarOverlayAnimation;
 + (void)hideMessageWithTag:(NSInteger)tag animation:(RGStatusBarOverlayAnimation)statusBarOverlayAnimation;
 
+// Set custom color
+
++ (void)setBackgroundColor:(UIColor *)color;
++ (void)setTextColor:(UIColor *)color;
+
 @end

@@ -7,15 +7,32 @@
 
 #import "RGStatusBarOverlay.h"
 
-#define TEXT_FONT [UIFont boldSystemFontOfSize:13]
+#define BACKGROUND_COLOR [UIColor blackColor]
+#define TEXT_COLOR [UIColor whiteColor]
+#define TEXT_FONT [UIFont boldSystemFontOfSize:([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 12 : 13)]
 #define MAX_WIDTH 320.0f
 #define ANIMATION_DURATION 0.3f
 #define ANIMATION_OPTIONS UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
 
-
 @implementation RGStatusBarOverlay
 
 static NSMutableArray *overlays;
+static UIColor *backgroundColor;
+static UIColor *textColor;
+
++ (void)setBackgroundColor:(UIColor *)color {
+    backgroundColor = color;
+}
++ (UIColor *)backgroundColor {
+    return backgroundColor ?: BACKGROUND_COLOR;
+}
+
++ (void)setTextColor:(UIColor *)color {
+    textColor = color;
+}
++ (UIColor *)textColor {
+    return textColor ?: TEXT_COLOR;
+}
 
 + (void)showMessage:(NSString *)text withSpinner:(BOOL)spinner animation:(RGStatusBarOverlayAnimation)statusBarOverlayAnimation {
 	[RGStatusBarOverlay showMessage:text withTag:0 spinner:spinner animation:statusBarOverlayAnimation];
@@ -37,7 +54,7 @@ static NSMutableArray *overlays;
 	}
 
 	RGStatusBarOverlay *me = [[RGStatusBarOverlay alloc] initWithFrame:frame];
-	me.backgroundColor = UIColor.blackColor;
+	me.backgroundColor = self.backgroundColor;
 	me.windowLevel = UIWindowLevelStatusBar + 1.0f;
 	me.hidden = NO;
 	me.tag = tag;
@@ -48,7 +65,7 @@ static NSMutableArray *overlays;
 	[overlays addObject:me];
 
 	UIView *contentView = [[UIView alloc] initWithFrame:me.bounds];
-	contentView.backgroundColor = [UIColor blackColor];
+	contentView.backgroundColor = self.backgroundColor;
 
 	// if message wider then frame, make it shorter
 	if (size.width > MAX_WIDTH) {
@@ -71,8 +88,8 @@ static NSMutableArray *overlays;
 	}
 
 	UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(text_x, 0.0f, size.width, size.height)];
-	label.backgroundColor = [UIColor blackColor];
-	label.textColor = [UIColor whiteColor];
+	label.backgroundColor = self.backgroundColor;
+	label.textColor = self.textColor;
 	label.font = TEXT_FONT;
 	label.text = text;
 	[contentView addSubview:label];
