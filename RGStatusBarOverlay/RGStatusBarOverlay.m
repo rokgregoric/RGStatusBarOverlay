@@ -10,7 +10,7 @@
 #define BACKGROUND_COLOR [UIColor blackColor]
 #define TEXT_COLOR [UIColor whiteColor]
 #define TEXT_FONT [UIFont boldSystemFontOfSize:([[[UIDevice currentDevice] systemVersion] floatValue] >= 7.0 ? 12 : 13)]
-#define MAX_WIDTH 320.0f
+#define MAX_WIDTH UIScreen.mainScreen.bounds.size.width
 #define ANIMATION_DURATION 0.3f
 #define ANIMATION_OPTIONS UIViewAnimationOptionCurveEaseInOut | UIViewAnimationOptionBeginFromCurrentState | UIViewAnimationOptionAllowUserInteraction
 
@@ -39,19 +39,13 @@ static UIColor *textColor;
 }
 
 + (void)showMessage:(NSString *)text withTag:(NSInteger)tag spinner:(BOOL)spinner animation:(RGStatusBarOverlayAnimation)statusBarOverlayAnimation {
-	CGSize size = [text sizeWithFont:TEXT_FONT forWidth:MAX_WIDTH lineBreakMode:NSLineBreakByTruncatingMiddle];
+	CGFloat width = [text boundingRectWithSize:CGSizeMake(MAX_WIDTH, MAXFLOAT) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:TEXT_FONT} context:nil].size.width;
 	CGRect frame = CGRectZero;
 	float text_x = 0.0f;
 
 	frame.size = UIApplication.sharedApplication.statusBarFrame.size;
 
-	size.height = frame.size.height;
-
-	// on iPad hide only the middle section
-	if (frame.size.width > MAX_WIDTH) {
-		frame.origin.x = (frame.size.width - MAX_WIDTH) / 2;
-		frame.size.width = MAX_WIDTH;
-	}
+	CGSize size = CGSizeMake(ceil(width), frame.size.height);
 
 	RGStatusBarOverlay *me = [[RGStatusBarOverlay alloc] initWithFrame:frame];
 	me.backgroundColor = self.backgroundColor;
